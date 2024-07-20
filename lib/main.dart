@@ -1,15 +1,24 @@
+import 'package:alerta_total/firebase_options.dart';
+import 'package:alerta_total/pages/home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
-    return const MaterialApp(
+    return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: HomePage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true
+      ),
+      home: HomePage(),
       // initialRoute: LoginPage.routename,
       // routes: {
       //   // LoginPage.routename  :(context) => const LoginPage(),

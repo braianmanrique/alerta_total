@@ -1,61 +1,82 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:flutter/material.dart';
-// import 'package:sign_in_button/sign_in_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-// class _HomePageState extends State<HomePage> {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   User? _user;
+class _HomePageState extends State<HomePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _user;
 
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     _auth.authStateChanges().listen((event){
-//       setState(() {
-//         _user = event;
-//       });
-//     });
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     return  Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Iniciar con Gmail !!"),
-//         backgroundColor: Colors.red,
-//       ),
-//       body: _user != null ?  _userInfo(): _googleSignInButton(),
-//     );
-//   }
+  @override
+  void initState() {
+    super.initState();
+    _auth.authStateChanges().listen((event){
+      setState(() {
+        _user = event;
+        print(_user);
 
-//   Widget _googleSignInButton(){
-//     return Center(
-//         child: SizedBox(
-//           height: 50,
-//            child: SignInButton(Buttons.google, 
-//            text: "Sign up with google",
-//            onPressed: _handleGoogleSignIn,),
-//            ),
-//            );
-//   }
+      });
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+      appBar: AppBar(
+        title: const Text("Iniciar con Gmail !!"),
+        backgroundColor: Colors.red,
+      ),
+      body: _user != null ?  _userInfo(): _googleSignInButton(),
+    );
+  }
 
-//   Widget _userInfo(){
-//     return SizedBox();
-//   }
+  Widget _googleSignInButton(){
+    return Center(
+        child: SizedBox(
+          height: 50,
+           child: SignInButton(Buttons.google, 
+           text: "Sign up with google",
+           onPressed: _handleGoogleSignIn,),
+           ),
+           );
+  }
 
-//   void _handleGoogleSignIn(){
-//     try{
-//       GoogleAuthProvider _googleAuthProvider =  GoogleAuthProvider();
-//       _auth.signInWithProvider(_googleAuthProvider);
-//     }catch(error){
-//       print(error);
-//     }
-//   }
-// }
+  Widget _userInfo(){
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(_user!.photoURL!))),
+        ),
+        Text(_user!.email!),
+        Text(_user!.displayName ?? ""),
+        MaterialButton(
+           color: Colors.red,
+           child: const Text("Salir"), 
+          onPressed: _auth.signOut)
+  
+        ],
+      ),
+    );
+  }
+
+  void _handleGoogleSignIn(){
+    try{
+      GoogleAuthProvider _googleAuthProvider =  GoogleAuthProvider();
+      _auth.signInWithProvider(_googleAuthProvider);
+    }catch(error){
+      print(error);
+    }
+  }
+}
