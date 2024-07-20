@@ -80,3 +80,42 @@ class _HomePageState extends State<HomePage> {
     }
   }
 }
+
+void signInWithGoogle() async {
+  try {
+    UserCredential userCredential;
+    // if (kIsWeb) {
+    //   // Use signInWithPopup for web
+    //   GoogleAuthProvider googleProvider = GoogleAuthProvider();
+    //   userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    // } else {
+      // Use signInWithRedirect for mobile
+      
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      await FirebaseAuth.instance.signInWithRedirect(googleProvider);
+      userCredential = await FirebaseAuth.instance.getRedirectResult();
+    // }
+    User? user = userCredential.user;
+    print('Successfully signed in with Google: ${user?.displayName}');
+  } catch (e) {
+    print('Error during sign in with Google: $e');
+  }
+}
+
+  // Future<void> _handleGoogleSignIn() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+  //     User? user = userCredential.user;
+  //     print('Successfully signed in with Google: ${user?.displayName}');
+  //   } catch (e) {
+  //     print('Error during sign in with Google: $e');
+  //   }
+  // }
