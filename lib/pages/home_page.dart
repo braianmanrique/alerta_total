@@ -1,3 +1,5 @@
+import 'package:alerta_total/auth/auth_service.dart';
+import 'package:alerta_total/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
+  final _authService = AuthService();
 
   @override
   void initState() {
@@ -25,6 +28,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -42,7 +46,11 @@ class _HomePageState extends State<HomePage> {
           height: 50,
            child: SignInButton(Buttons.google, 
            text: "Sign up with google",
-           onPressed: _handleGoogleSignIn,),
+          //  onPressed: _handleGoogleSignIn,
+          onPressed: () async {
+            await _authService.loginWithGoogle();
+          },
+           ),
            ),
            );
   }
@@ -61,35 +69,34 @@ class _HomePageState extends State<HomePage> {
         ),
         Text(_user!.email!),
         Text(_user!.displayName ?? ""),
+        const SizedBox(height: 20),
+        CustomButton(
+              label: "Cerrar Session",
+              onPressed: () async {
+                await _authService.signout();
+                goToLogin(context);
+              },
+            ),
+        const SizedBox(height: 20),
+
         MaterialButton(
            color: Colors.red,
-           child: const Text("Salir"), 
-          onPressed: _auth.signOut)
+           child: const Text("Cerrar session"), 
+          onPressed: ()async{
+            await _authService.signout();
+          })
   
         ],
       ),
     );
   }
 
-  void _handleGoogleSignIn(){
-    try{
-      GoogleAuthProvider _googleAuthProvider =  GoogleAuthProvider();
-      _auth.signInWithProvider(_googleAuthProvider);
-    }catch(error){
-      print(error);
-    }
-  }
+
 }
 
 void signInWithGoogle() async {
   try {
     UserCredential userCredential;
-    // if (kIsWeb) {
-    //   // Use signInWithPopup for web
-    //   GoogleAuthProvider googleProvider = GoogleAuthProvider();
-    //   userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-    // } else {
-      // Use signInWithRedirect for mobile
       
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
       await FirebaseAuth.instance.signInWithRedirect(googleProvider);
@@ -102,20 +109,8 @@ void signInWithGoogle() async {
   }
 }
 
-  // Future<void> _handleGoogleSignIn() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  //     final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
 
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-
-  //     UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-  //     User? user = userCredential.user;
-  //     print('Successfully signed in with Google: ${user?.displayName}');
-  //   } catch (e) {
-  //     print('Error during sign in with Google: $e');
-  //   }
-  // }
+  goToLogin(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
