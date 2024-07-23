@@ -37,6 +37,15 @@ class AuthService{
     }
     return null;
   }
+
+
+  exceptionHandler(String code){
+    switch(code){
+      case "invalid-credential":
+        print('message');
+    }
+  }
+
 }
 
 

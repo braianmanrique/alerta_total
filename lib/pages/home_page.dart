@@ -15,6 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
+
+
   final _authService = AuthService();
 
   @override
@@ -50,9 +52,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () async {
             await _authService.loginWithGoogle();
           },
-           ),
-           ),
-           );
+           ), ),);
   }
 
   Widget _userInfo(){

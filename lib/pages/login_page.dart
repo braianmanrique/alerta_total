@@ -1,18 +1,24 @@
+import 'dart:math';
+
 import 'package:alerta_total/auth/auth_service.dart';
+import 'package:alerta_total/pages/dashboard_page.dart';
 import 'package:alerta_total/ui/input_decorations.dart';
 import 'package:alerta_total/widgets/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+  //  final _authService = AuthService();
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _authService = AuthService();
+    final _authService = AuthService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +38,8 @@ class _LoginPageState extends State<LoginPage> {
                     SignInButton(
                       Buttons.google, 
                       text: "Ingresa con Google",
-                       onPressed: () async {
-                             await _authService.loginWithGoogle();
-                  },)
+                       onPressed: _login
+                  )
                   ],
                 ),
               ),
@@ -47,8 +52,26 @@ class _LoginPageState extends State<LoginPage> {
       )
     );
   }
+
+  _login() async{
+    final userCredential = await _authService.loginWithGoogle();
+
+    // final user =
+    //     await _authService.loginWithGoogle();
+  
+    if (userCredential?.user != null &&  userCredential?.user != null) {
+      print("User Logged In");
+      // goToHome(context, userCredential.user);
+      goToHome(context, userCredential!.user!);
+    }
+  
 }
 
+  void goToHome(BuildContext context, User user) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  DashboardPage(user:user)),
+      );
+}
 
 class _LoginForm extends StatelessWidget {
 
@@ -78,7 +101,7 @@ class _LoginForm extends StatelessWidget {
             elevation: 0,
             color: Colors.deepOrangeAccent,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 80,vertical: 15),
+              padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
               child: Text('Ingresar', style: TextStyle(color: Colors.white),),
             ),
             onPressed: (){})
@@ -86,4 +109,7 @@ class _LoginForm extends StatelessWidget {
         ),
     );
   }
+
+  
 }
+
