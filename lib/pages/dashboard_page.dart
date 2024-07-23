@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
-  final User user;
+  final User? user;
 
   const DashboardPage({super.key, required this.user});
 
@@ -45,6 +45,7 @@ class _DashboardPageState extends State<DashboardPage> {
     //   ),
     // );
     return   Scaffold(
+      
       body: Stack(
         children: [
           //Background
@@ -57,7 +58,21 @@ class _DashboardPageState extends State<DashboardPage> {
           //     await _authService.signout();
           //     Navigator.pushReplacementNamed(context, 'login');
           // })
-          
+          SizedBox(height: 10,),
+          //  CardsDiscipline(),
+           Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: CardsDiscipline(),
+            ),
+          ),
+          // Column(
+          //   children: [
+          //   CardsDiscipline()
+
+          //   ],
+          // )
         ],
       ),
       bottomNavigationBar: CustomBottonNavigation(),

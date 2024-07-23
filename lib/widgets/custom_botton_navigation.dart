@@ -1,5 +1,7 @@
 // import 'package:alerta_total/auth/auth_service.dart';
 import 'package:alerta_total/auth/auth_service.dart';
+import 'package:alerta_total/pages/dashboard_page.dart';
+import 'package:alerta_total/pages/pages.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottonNavigation extends StatelessWidget {
@@ -29,9 +31,21 @@ class CustomBottonNavigation extends StatelessWidget {
         ),
         ],
          onTap: (index) {
-        if (index == 2) {
-          _showLogoutDialog(context);
-        }
+          switch(index){
+            case 1:
+              Navigator.push(context, 
+               MaterialPageRoute(builder: (context) => RecordsPage()),
+               );
+               break;
+            // case 1:
+            //   Navigator.push(context, 
+            //    MaterialPageRoute(builder: (context) => DashboardPage(user: null,)),
+            //    );
+            //    break;
+            case 2: 
+               _showLogoutDialog(context);
+               break;
+          }
       },
     );
   }

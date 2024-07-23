@@ -7,6 +7,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:696502493818:android:a7cdfceb53f980292211c3",
+        "android_client_info": {
+          "package_name": "com.alerta_total"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696502493818-8a7gkhcdanc111mniod8npmfhsevf0nu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alerta_total",
+            "certificate_hash": "0ec904fecdc9e3920246f44b9b089197f377ce64"
+          }
+        },
+        {
+          "client_id": "696502493818-i87raiha8u76j4o760jsuk7he0ad6bq2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMrhs19h9dCnTrcLUNJIHYUjgSnjAmbK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "696502493818-i87raiha8u76j4o760jsuk7he0ad6bq2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:696502493818:android:21a068f25e27d01b2211c3",
         "android_client_info": {
           "package_name": "com.example.alerta_total"
