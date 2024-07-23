@@ -1,4 +1,5 @@
 import 'package:alerta_total/pages/pages.dart';
+import 'package:alerta_total/pages/report_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget{
       initialRoute: 'login',
       routes: {
         'login' : (_) => LoginPage(),
-        'home': (_) => HomePage()
+        'home': (_) => HomePage(),
+        'report' : (_) => ReportPage()
       },
       // initialRoute: LoginPage.routename,
       // routes: {
@@ -33,7 +35,6 @@ class MyApp extends StatelessWidget{
       //   // HomePage.routename   :(context) => const HomePage(),
       // },
 
-        // home: Center(child: Text('Bienvenido')),
     );
   }
 }
