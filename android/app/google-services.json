@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "696502493818-8a7gkhcdanc111mniod8npmfhsevf0nu.apps.googleusercontent.com",
+          "client_id": "696502493818-rqi7qbrb7d5bg8ese8ie5cfcusn95a2u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.alerta_total",
-            "certificate_hash": "0ec904fecdc9e3920246f44b9b089197f377ce64"
+            "certificate_hash": "9eed99be26f88081fbf37e54bc27c0a402dccbd3"
           }
         },
         {

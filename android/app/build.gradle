@@ -37,7 +37,9 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.alerta_total"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 23
+    compileSdkVersion 34  // Actualiza a la versión más alta disponible que tengas instalada
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -53,8 +55,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        versionCode = 9
+        versionName = 1.9
     }
 
      signingConfigs {

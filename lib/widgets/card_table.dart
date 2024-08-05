@@ -18,12 +18,12 @@ class CardTable extends StatelessWidget {
             _SingleCard( color: Colors.white , text: 'Alcandia Municipal' , icon: Icons.policy_sharp, identifier: 'Alcaldia' ),
         ]
         ),
-        // TableRow(
-        //   children: [
-        //     _SingleCard( color: Colors.white , text: 'Defensa civil' , icon: Icons.bloodtype_sharp ),
-        //     _SingleCard( color: Colors.white , text: 'Cuerpo de Bomberos' , icon: Icons.fire_hydrant_alt_sharp ),
-        // ]
-        // ),       
+        TableRow(
+          children: [
+            _SingleCard( color: Colors.white , text: 'Defensa civil' , icon: Icons.bloodtype_sharp,  identifier: 'Defensa_civil'  ),
+            _SingleCard( color: Colors.white , text: 'Cuerpo de Bomberos' , icon: Icons.fire_hydrant_alt_sharp , identifier: 'bomberos' ),
+        ]
+        ),       
         
       ],
     );

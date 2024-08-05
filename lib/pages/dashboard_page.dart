@@ -60,13 +60,13 @@ class _DashboardPageState extends State<DashboardPage> {
           // })
           SizedBox(height: 10,),
           //  CardsDiscipline(),
-           Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: CardsDiscipline(),
-            ),
-          ),
+          //  Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(bottom: 20.0),
+          //     child: CardsDiscipline(),
+          //   ),
+          // ),
           // Column(
           //   children: [
           //   CardsDiscipline()

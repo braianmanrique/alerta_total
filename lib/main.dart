@@ -1,3 +1,4 @@
+import 'package:alerta_total/pages/dashboard_page.dart';
 import 'package:alerta_total/pages/pages.dart';
 import 'package:alerta_total/pages/report_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +12,8 @@ void main() async{
 }
 
 class MyApp extends StatelessWidget{
+  get user => null;
+
   @override
   Widget build(BuildContext context){
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -26,8 +29,10 @@ class MyApp extends StatelessWidget{
       initialRoute: 'login',
       routes: {
         'login' : (_) => LoginPage(),
+        'register' : (_) => RegisterPage(),
         'home': (_) => HomePage(),
-        'report' : (_) => ReportPage()
+        'report' : (_) => ReportPage(),
+        'dashboard' : (_) => DashboardPage(user: user)
       },
       // initialRoute: LoginPage.routename,
       // routes: {

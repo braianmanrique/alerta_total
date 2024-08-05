@@ -16,7 +16,7 @@ class AuthService{
 
     }
     catch(e){
-      print(e.toString());
+         throw Exception('Error al iniciar sesión con Google: $e');
     }
   } 
 

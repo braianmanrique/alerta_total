@@ -13,7 +13,7 @@ class AuthBackground extends StatelessWidget {
       height: double.infinity,
       child: Stack(
         children: [
-          _HeaderIcon(),
+          // _HeaderIcon(),
           this.child
         ],
         ) ,
