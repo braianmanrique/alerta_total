@@ -11,7 +11,7 @@ class AuthService{
       final googleUser = await GoogleSignIn().signIn();
       final googleAuth = await googleUser?.authentication;
       final cred = GoogleAuthProvider.credential(idToken: googleAuth?.idToken, accessToken: googleAuth?.accessToken);
-
+      
       return await _auth.signInWithCredential(cred);
 
     }
@@ -48,17 +48,3 @@ class AuthService{
 
 }
 
-
-
-
-  // Future<User?> loginUserWithEmailAndPassword(
-  //     String email, String password) async {
-  //   try {
-  //     final cred = await _auth.signInWithEmailAndPassword(
-  //         email: email, password: password);
-  //     return cred.user;
-  //   } catch (e) {
-  //     log("Something went wrong");
-  //   }
-  //   return null;
-  // }

@@ -1,10 +1,13 @@
 import 'package:alerta_total/auth/auth_service.dart';
+import 'package:alerta_total/controller/alert_controller.dart';
 import 'package:alerta_total/pages/login_page.dart';
 import 'package:alerta_total/widgets/custom_botton_navigation.dart';
 import 'package:alerta_total/widgets/page_title.dart';
 import 'package:alerta_total/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 
 class DashboardPage extends StatefulWidget {
   final User? user;
@@ -17,6 +20,14 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
     final _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    // Registrar el controlador
+      final alertCtrl = Get.put(AlertController());
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +100,8 @@ class _HomeBody extends StatelessWidget {
         children: [
           //Titulos
           PageTitle(),
-
           // Card Table
           CardTable()
-
 
         ],
       ),

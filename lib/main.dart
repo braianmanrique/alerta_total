@@ -1,14 +1,33 @@
+import 'package:alerta_total/controller/alert_controller.dart';
 import 'package:alerta_total/pages/dashboard_page.dart';
 import 'package:alerta_total/pages/pages.dart';
 import 'package:alerta_total/pages/report_page.dart';
+import 'package:alerta_total/services/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(); // Asegúrate de inicializar Firebase aquí
-  runApp(MyApp());
+      Get.put(AlertController());
+
+  runApp(AppState());
+}
+
+class AppState extends StatelessWidget{
+  Widget build(BuildContext context){
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) =>AuthLoginService()),
+
+        ChangeNotifierProvider(create: (_) =>AlertService())
+      ],
+      child: MyApp(),);
+  }
 }
 
 class MyApp extends StatelessWidget{
@@ -18,7 +37,7 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context){
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
-    return  MaterialApp(
+    return  GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Alerta Total',
       theme: ThemeData(
@@ -34,12 +53,6 @@ class MyApp extends StatelessWidget{
         'report' : (_) => ReportPage(),
         'dashboard' : (_) => DashboardPage(user: user)
       },
-      // initialRoute: LoginPage.routename,
-      // routes: {
-      //   // LoginPage.routename  :(context) => const LoginPage(),
-      //   // HomePage.routename   :(context) => const HomePage(),
-      // },
-
     );
   }
 }

@@ -54,7 +54,7 @@ class _SingleCard extends StatelessWidget {
         margin: EdgeInsets.all(15),
           height: 150,
           decoration: BoxDecoration(
-            color: Color.fromRGBO(62, 66, 107, 0.5),
+            color: Color.fromRGBO(188, 189, 207, 0.498),
             borderRadius: BorderRadius.circular(20),
       
           ),

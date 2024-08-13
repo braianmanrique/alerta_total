@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RecordsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Simulated records data
     final List<Map<String, String>> records = [
-      {'ID': '1', 'Fecha': '2023-07-01', 'Entidad': 'Policia', 'Alert': 'High'},
-      {'ID': '2', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia', 'Alert': 'Medium'},
-      {'ID': '3', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia', 'Alert': 'Low'},
-      {'ID': '4', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia', 'Alert': 'Low'},
+      {'ID': '1', 'Fecha': '2023-07-01', 'Entidad': 'Policia', 'Estado': "Finalizada / Procesada", 'Alert': 'High'},
+      {'ID': '2', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia','Estado': "Enviada a la entidad", 'Alert': 'Medium'},
+      {'ID': '3', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia','Estado': "En espera", 'Alert': 'Low'},
+      {'ID': '4', 'Fecha': '2023-07-01', 'Entidad': 'Alcaldia','Estado': "Creada", 'Alert': 'Low'},
       // Add more records as needed
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registros de Alertas'),
+        title: Text('Mis Alertas', style: GoogleFonts.exo2(fontWeight: FontWeight.bold, color: Colors.white),),
         backgroundColor: Colors.deepOrange,
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+      
       ),
       body: Padding(
         
@@ -23,15 +28,17 @@ class RecordsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          _Title(),
+          // _Title(),
+          SizedBox(height: 40,),
            SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
               headingRowColor: MaterialStateColor.resolveWith((states) => Colors.deepOrange),
-              columns: [
+              columns: const [
                 DataColumn(label: Text('ID')),
                 DataColumn(label: Text('Fecha')),
                 DataColumn(label: Text('Entidad')),
+                DataColumn(label: Text('Estado')),
                 DataColumn(label: Text('Urgencia')),
               ],
               rows: records.map((record) {
@@ -39,6 +46,7 @@ class RecordsPage extends StatelessWidget {
                   DataCell(Text(record['ID']!)),
                   DataCell(Text(record['Fecha']!)),
                   DataCell(Text(record['Entidad']!)),
+                  DataCell(Text(record['Estado']!)),
                   DataCell(_buildAlertCell(record['Alert']!)),
                 ]);
               }).toList(),

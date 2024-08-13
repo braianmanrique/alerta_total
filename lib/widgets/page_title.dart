@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PageTitle extends StatelessWidget {
 
@@ -11,14 +12,15 @@ class PageTitle extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Bienvenido', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),),
+            SizedBox(height: 20,),
+            Text('Bienvenido',  style: GoogleFonts.exo2(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20), ),
             SizedBox(height: 10,),
-            Text('Seleccion la entidad y reporta con nosotros', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),)
+            Text('Selecciona la entidad y reporta con nosotros', style: GoogleFonts.exo2(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),)
           ],
-      
         ),
       
       ),
     );
   }
 }
+

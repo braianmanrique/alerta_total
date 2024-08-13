@@ -111,10 +111,24 @@ class _LoginForm extends StatelessWidget {
 
           ),
           SizedBox(height: 30,),
+           TextFormField(
+            autocorrect: false,
+            keyboardType: TextInputType.name,
+            decoration: InputDecorations.authInputDecoration(hintText: 'correo', labelText: 'Nombre', prefixIcon: Icons.person_2),
+
+          ),
+          SizedBox(height: 30,),
+             TextFormField(
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecorations.authInputDecoration(hintText: 'correo', labelText: 'Numero de documento', prefixIcon: Icons.verified_user_outlined),
+
+          ),
+          SizedBox(height: 30,),
           TextFormField(
             autocorrect: false,
             obscureText: true,
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.visiblePassword,
             decoration: InputDecorations.authInputDecoration(hintText: '******', labelText: 'Contraseña', prefixIcon: Icons.lock_outline),
             
           ),
@@ -128,7 +142,10 @@ class _LoginForm extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
               child: Text('Ingresar', style: TextStyle(color: Colors.white),),
             ),
-            onPressed: (){})
+            onPressed: (){
+              // if(!_LoginForm.isValidForm()) return ;
+
+            })
         ],),
         ),
     );

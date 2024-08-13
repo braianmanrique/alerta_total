@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:alerta_total/auth/auth_service.dart';
 import 'package:alerta_total/pages/dashboard_page.dart';
 import 'package:alerta_total/providers/login_form_provider.dart';
+import 'package:alerta_total/services/auth_login_service.dart';
 import 'package:alerta_total/ui/input_decorations.dart';
 import 'package:alerta_total/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,45 +24,55 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      body: AuthBackground(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox( height: 200,),
-              CardContainer(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10,),
-                    Text('Iniciar sesion', style: Theme.of(context).textTheme.headlineLarge,),
-                    
-                    ChangeNotifierProvider(
+      body: Stack(
+        children: [
+         AuthBackground(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox( height: 220,),
+              
+                CardContainer(
+                  child: Column(
+                    children: [
+                      ChangeNotifierProvider(                
+                        create: (_) => LoginFormProvider(),
+                        child: _LoginForm(),
+                        ),
                       
-                      create: (_) => LoginFormProvider(),
-                      child: _LoginForm(),
-                      ),
-                    
-                    SizedBox(height: 30),
-                    SignInButton(
-                      Buttons.google, 
-                      text: "Ingresa con Google",
-                       onPressed: _login
-                  )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50,),
-              TextButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, 'register'), 
-                  style: ButtonStyle(
-                    overlayColor: WidgetStateProperty.all(Colors.amber.withOpacity(0.1)),
-                    shape: WidgetStateProperty.all(StadiumBorder())
+                      const SizedBox(height: 30),
+                      SignInButton(
+                        Buttons.google, 
+                        text: "Ingresa con Google",
+                         onPressed: _login
+                    )
+                    ],
                   ),
-                child:const Text('Crear una nueva cuenta ', style: TextStyle(fontSize: 18 , color: Colors.black87),),
                 ),
-              SizedBox(height: 50,)
-            ],
+                const SizedBox(height: 50,),
+                TextButton(
+                    onPressed: () => Navigator.pushReplacementNamed(context, 'register'), 
+                    style: ButtonStyle(
+                      overlayColor: WidgetStateProperty.all(Colors.amber.withOpacity(0.1)),
+                      shape: WidgetStateProperty.all(StadiumBorder())
+                    ),
+                  child:const Text('Crear una nueva cuenta ', style: TextStyle(fontSize: 18 , color: Colors.black87),),
+                  ),
+              ],
+              ),
+          ),
+        ),
+          Positioned(
+            // top: 125,
+            bottom: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/logo-sisgon.png', // Ruta a tu logo
+              height: 50,
             ),
-        )
+          ),
+
+        ]
       )
     );
   }
@@ -72,8 +83,35 @@ class _LoginPageState extends State<LoginPage> {
   
     if (userCredential?.user != null &&  userCredential?.user != null) {
       print("User Logged In");
-      // goToHome(context, userCredential.user);
-      goToHome(context, userCredential!.user!);
+      print(userCredential!.user!.email);
+      print( userCredential!.user);
+      final user = userCredential!.user!;
+      String? displayName = user.displayName;
+
+      final email = user.email!;
+      final uid = user.uid!;
+      final authLoginService = Provider.of<AuthLoginService>(context, listen: false);
+
+
+      final backendResponse = await authLoginService.loginUser(email, uid); // Suponiendo que usas el UID como contraseña
+      print(backendResponse);
+      if (backendResponse != "Email no encontrado") {
+        print("Usuario logueado y autenticado en el backend.");
+        goToHome(context, user);
+      } else {
+        final backendResponse = await authLoginService.registerUser(email, email,  uid, uid);
+      if (backendResponse == null) {
+        // Usuario logueado y autenticado en el backend
+        print("Usuario logueado y autenticado en el backend.");
+        goToHome(context, user);
+      } else {
+        // Muestra el error en caso de fallo en el backend
+        _showErrorDialog("Error", backendResponse);
+      }
+
+      }
+
+
     }
       
      }catch(e){
@@ -161,15 +199,32 @@ class _LoginForm extends StatelessWidget {
             disabledColor: Colors.amber,
             elevation: 0,
             color: Colors.deepOrangeAccent,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
-              child: Text('Ingresar', style: TextStyle(color: Colors.white),),
-            ),
-            onPressed: (){
+            onPressed: loginForm.isLoading ? null : () async{
+
+              FocusScope.of(context).unfocus();
+              final authLoginService = Provider.of<AuthLoginService>(context, listen: false);
+
               if(! loginForm.isValidForm()) return;
-              Navigator.pushReplacementNamed(context, 'dashboard');
-             
-            }
+              loginForm.isLoading = true;
+
+             final String? errorMessage = await authLoginService.loginUser(loginForm.email, loginForm.password);
+              print(errorMessage);
+              if(errorMessage ==  null) {
+                  Navigator.pushReplacementNamed(context, 'dashboard');
+                  loginForm.isLoading = false;
+
+              }else{
+                  loginForm.isLoading = false;
+              }
+
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 15),
+              child:  Text(
+                loginForm.isLoading
+                  ? 'Espere...':
+                'Ingresar', style: TextStyle(color: Colors.white),),
+            )
             )
         ],),
         ),

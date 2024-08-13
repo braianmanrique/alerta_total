@@ -1,15 +1,21 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:alerta_total/controller/alert_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:map_launcher/map_launcher.dart' as mapLauncher;
+import 'package:map_launcher/map_launcher.dart' as map_launcher;
+import 'package:url_launcher/url_launcher.dart';
+
+import '../widgets/widgets.dart';
 
 class ReportPage extends StatefulWidget {
-  const ReportPage({Key? key}) : super(key: key);
+  const ReportPage({super.key});
 
   @override
   _ReportPageState createState() => _ReportPageState();
@@ -17,25 +23,26 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   File? _image;
+
+    final alertCtrl = Get.find<AlertController>();
+
   final picker = ImagePicker();
   final TextEditingController _textController = TextEditingController();
 
   final Completer<GoogleMapController> _controller = Completer();
   MapType mapType = MapType.normal;
 
-  late LatLng locationFlutter =  LatLng(4.1500 ,-73.6333); 
+  late LatLng locationFlutter =  const LatLng(4.1500 ,-73.6333); 
   bool locationCheck = false; 
 
   late Marker marker;
-  Set<Marker> markers = new Set<Marker>();
+  Set<Marker> markers = <Marker>{};
   late double distMtrs;
-
-  late List<mapLauncher.AvailableMap> availableMaps;
+  late List<map_launcher.AvailableMap> availableMaps;
   late String optionDropdown = '1';
 
-
   Future _getLocation() async {
-    Location location = new Location();
+  Location location = Location();
    
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
@@ -63,7 +70,6 @@ class _ReportPageState extends State<ReportPage> {
     setState(() {});
   }
 
-
   Future<void> _getImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
 
@@ -79,7 +85,7 @@ class _ReportPageState extends State<ReportPage> {
   void _sendAlert() {
     // Implement your send alert functionality here
     String text = _textController.text;
-    print('Sending alert with text: $text and image: ${_image?.path}');
+    
     // Add your alert sending logic here
   }
 
@@ -96,7 +102,7 @@ class _ReportPageState extends State<ReportPage> {
       )
     );
 
-    availableMaps = await mapLauncher.MapLauncher.installedMaps;
+    availableMaps = await map_launcher.MapLauncher.installedMaps;
 
     if (kDebugMode) {
       print('//---------------------------------------------------------------------------------------------//');
@@ -105,12 +111,21 @@ class _ReportPageState extends State<ReportPage> {
     }
 
   }
+  
+  void _callEmergencyNumber() async {
+    const emergencyNumber = 'tel:911'; // Reemplaza con el número de emergencia real
+    if (await canLaunch(emergencyNumber)) {
+      await launch(emergencyNumber);
+    } else {
+      throw 'No se pudo realizar la llamada al número de emergencia';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     final width = MediaQuery.of(context).size;
+    // identifica la entidad
     final String identifier = ModalRoute.of(context)!.settings.arguments as String;
     late CameraPosition puntoInicial;
 
@@ -129,17 +144,15 @@ class _ReportPageState extends State<ReportPage> {
       );
 
       //Marcadores
-      markers.add(new Marker(
-        markerId: MarkerId('geo-location'),
+      markers.add(Marker(
+        markerId: const MarkerId('geo-location'),
         position: locationFlutter,
       ));
-
     }
 
-
     return Scaffold(
-    appBar: AppBar(
-        title: Text('Alertar', style: GoogleFonts.exo2(fontWeight: FontWeight.bold, color: Colors.white),),
+      appBar: AppBar(
+        title: Text('Realizar alerta', style: GoogleFonts.exo2(fontWeight: FontWeight.bold, color: Colors.white),),
         backgroundColor: Colors.deepOrange,
         iconTheme: const IconThemeData(
           color: Colors.white, //change your color here
@@ -161,27 +174,24 @@ class _ReportPageState extends State<ReportPage> {
               );
               }else{
                 await _getLocation(); 
-                controller.animateCamera( 
-
-                   CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: locationFlutter,
-            zoom: 15.5,
-            tilt: 50.0,
-          ),
-        ),
-                );
-              }
-            
-            }
-          ),
+              controller.animateCamera( 
+                CameraUpdate.newCameraPosition(
+                CameraPosition(
+                target: locationFlutter,
+                zoom: 15.5,
+                tilt: 50.0,
+                ),
+                ),
+                );}}
+            ),
           IconButton(
             icon: const Icon(Icons.layers_outlined), 
             onPressed: () {
               if(mapType == MapType.normal)
               {
                 mapType = MapType.hybrid;
-              }else{
+              }
+              else{
                 mapType = MapType.normal;
               }
 
@@ -190,53 +200,146 @@ class _ReportPageState extends State<ReportPage> {
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          // _CustomAppBar(identifier: identifier),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              // _Title(),
-              Container(
-                height: size.height * 0.28,
-                width: size.width *0.3,
-                margin: const EdgeInsets.all(29.0),
-                decoration: BoxDecoration(
-                border: Border.all(width: 3.0, color: Colors.black.withOpacity(0.2)),
-                borderRadius: BorderRadius.circular(15.0),
+      body: Stack(
+        children: [
+        CustomScrollView(   
+          slivers: [
+            // _CustomAppBar(identifier: identifier),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                // _Title(),
+                Container(
+                  height: size.height * 0.28,
+                  width: size.width *0.3,
+                  margin: const EdgeInsets.all(29.0),
+                  decoration: BoxDecoration(
+                  // border: Border.all(width: 3.0, color: Colors.black.withOpacity(0.2)),
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [  
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        // spreadRadius: 5,
+                        blurRadius: 10,
+                        offset: Offset(0, 6), //
+                      )]
+                  ),
+                  child: ClipRRect(
+                     borderRadius: BorderRadius.circular(10.0),
+                     child: GoogleMap(
+                          myLocationEnabled: true,
+                          myLocationButtonEnabled: false,
+                          mapType: mapType,
+                          markers: markers,
+                          initialCameraPosition: locationCheck ? puntoInicial : puntodefault,
+                          onMapCreated: (GoogleMapController controller) {
+                          _controller.complete(controller);
+                          },
+        
+                     ),
+                  ),
                 ),
-                child: ClipRRect(
-                   borderRadius: BorderRadius.circular(10.0),
-                   child: GoogleMap(
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: false,
-                        mapType: mapType,
-                        markers: markers,
-                        initialCameraPosition: locationCheck ? puntoInicial : puntodefault,
-                        onMapCreated: (GoogleMapController controller) {
-                        _controller.complete(controller);
-                        },
-
-                   ),
+        
+                SizedBox(height: 5,),
+                // _Overview(),
+                _ImageSection(
+                  image: _image,
+                  onCameraTap: () => _getImage(ImageSource.camera),
+                  onGalleryTap: () => _getImage(ImageSource.gallery),
                 ),
-              ),
+               
+                SizedBox(height: 5),
+                _TextSection(
+                  textController: _textController,
+                  onSendAlert: _sendAlert,
+                ),
+              ]),
+            ),
+          ],
+        ),
+        ElevatedButton(
+  onPressed: () {
+    Get.snackbar(
+      'Prueba',
+      'Este es un mensaje de prueba',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  },
+  child: Text('Mostrar Snackbar'),
+),
+         Positioned(
+           bottom: 60,
+          left: 30,
+           child: ButtonWidget(
+                      width: size.width * 0.4,
+                      height: 55.0,
+                      colorButton: const Color(0xffe30613),
+                      borderRadius: BorderRadius.circular(15.0),
+                      title: 'Enviar Alerta',
+                      onPressed: () async {
+                        await alertCtrl.sendAlert(locationFlutter);
+                          if(alertCtrl.statusOk.value){
+                            Get.snackbar(
+                            'Mensaje Importante', 
+                            'Alerta agregada con exito',
+                            backgroundColor: Colors.green,
+                            icon: const Icon(Icons.check_circle_rounded, color: Color(0xff16a085)),        
+                            snackPosition: SnackPosition.BOTTOM,
+                
+                            boxShadows: [
+                              const BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 10.0
+                              )
+                            ]
+                          );
+                          }else{
+                            Get.snackbar(
+                              'Mensaje', 
+                              'Error al gagregar alerta',
+                              backgroundColor: Colors.blue,
+                              snackPosition: SnackPosition.BOTTOM,
 
-              SizedBox(height: 5,),
-              // _Overview(),
-              _ImageSection(
-                image: _image,
-                onCameraTap: () => _getImage(ImageSource.camera),
-                onGalleryTap: () => _getImage(ImageSource.gallery),
+                              icon: const Icon(Icons.error_rounded, color: Color(0xff16a085)),                        
+                              boxShadows: [
+                                const BoxShadow(
+                                  color: Colors.black38,
+                                  blurRadius: 10.0
+                                )
+                              ]
+                            );
+                          }
+                          Navigator.of(context).pushNamedAndRemoveUntil('dashboard', (Route<dynamic> route) => false);
+                      },
+                    ),
+         ),
+         Positioned(
+          bottom: 20,
+          left: 30,
+          child: ElevatedButton.icon(
+          icon: const Icon(Icons.send_outlined),
+          label: const Text('Enviar'),
+          onPressed: _sendAlert,
+          style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent, // Fondo rojo
+                foregroundColor: Colors.white, // Texto blanco
               ),
-             
-              SizedBox(height: 5),
-              _TextSection(
-                textController: _textController,
-                onSendAlert: _sendAlert,
-              ),
-            ]),
+          )  
           ),
-        ],
-      ),
+        Positioned(
+          bottom: 20,
+          right: 30,
+          child: ElevatedButton.icon(
+          icon: const Icon(Icons.phone),
+          label: const Text('Llamar'),
+          onPressed: _callEmergencyNumber,
+          style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Fondo rojo
+                foregroundColor: Colors.white, // Texto blanco
+              ),
+          )
+          
+          )
+      ]),
     );
   }
 }
@@ -244,7 +347,7 @@ class _ReportPageState extends State<ReportPage> {
 class _CustomAppBar extends StatelessWidget {
   final String identifier;
 
-  const _CustomAppBar({super.key, required this.identifier});
+  const _CustomAppBar({required this.identifier});
   
   @override
   Widget build(BuildContext context) {
@@ -261,28 +364,28 @@ class _CustomAppBar extends StatelessWidget {
   }
 }
 
-class _Title extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.symmetric(horizontal: 5),
-      child: Row(children: [
-        SizedBox(width: 10),
-        Column(
-          children: [
-            Text(
-              'Generar Reporte',
-              style: Theme.of(context).textTheme.headlineSmall,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-          ],
-        )
-      ]),
-    );
-  }
-}
+// class _Title extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: EdgeInsets.only(top: 20),
+//       padding: EdgeInsets.symmetric(horizontal: 5),
+//       child: Row(children: [
+//         SizedBox(width: 10),
+//         Column(
+//           children: [
+//             Text(
+//               'Generar Reporte',
+//               style: Theme.of(context).textTheme.headlineSmall,
+//               overflow: TextOverflow.ellipsis,
+//               maxLines: 2,
+//             ),
+//           ],
+//         )
+//       ]),
+//     );
+//   }
+// }
 
 class _ImageSection extends StatelessWidget {
   final File? image;
@@ -311,10 +414,10 @@ class _ImageSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                         color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 5,
+                        color: Colors.black.withOpacity(0.5),
+                        // spreadRadius: 5,
                         blurRadius: 10,
-                        offset: Offset(0, 3), //
+                        offset: Offset(0, 6), //
                       )
                     ]
                   ),
@@ -364,6 +467,7 @@ class _TextSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
+            
             controller: textController,
             maxLines: 4,
             decoration: InputDecoration(
@@ -380,10 +484,10 @@ class _TextSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: onSendAlert,
-            child: Text('Enviar '),
-          ),
+          // ElevatedButton(
+          //   onPressed: onSendAlert,
+          //   child: Text('Enviar '),
+          // ),
         ],
       ),
     );
