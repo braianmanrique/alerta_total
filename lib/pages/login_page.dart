@@ -65,13 +65,30 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
           Positioned(
-            // top: 125,
-            bottom: 0,
+            top: 32,
+            // bottom: 0,
+            left: 0,
             right: 0,
-            child: Image.asset(
-              'assets/logo-sisgon.png', // Ruta a tu logo
-              height: 50,
-            ),
+            child: Container(
+                            alignment: Alignment.center,
+                                          margin: const EdgeInsets.symmetric(horizontal: 20.0), // Margen a los lados
+              // padding: const EdgeInsets.all(10), // Espaciado alrededor de la imagen
+
+
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Borde redondeado
+              
+                child: Container(
+                  color: Colors.transparent,
+                  alignment: Alignment.bottomCenter,
+                  child: Image.asset(
+                  'assets/sisgon_blanco.jpeg', // Ruta a tu logo
+                       width: MediaQuery.of(context).size.width, // Ocupa todo el ancho
+                      height: 70, // Ajusta la altura según lo necesites
+                      fit: BoxFit.cover, 
+                ),),
+              ),
+            )
           ),
 
         ]
@@ -215,7 +232,7 @@ class _LoginForm extends StatelessWidget {
                             errorMessage,
                             backgroundColor: Colors.white,
                             icon: const Icon(Icons.nearby_error, color: Color.fromARGB(255, 160, 22, 22)),        
-                            snackPosition: SnackPosition.TOP,
+                            snackPosition: SnackPosition.BOTTOM,
                             boxShadows: [
                               const BoxShadow(
                                 color: Colors.black38,

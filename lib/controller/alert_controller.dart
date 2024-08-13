@@ -36,7 +36,31 @@ class AlertController extends GetxController{
     }
   }
 
-  Future sendAlert(LatLng value, String entidad, String msg , String selectedTags) async {  
+
+Future<String> uploadImageToCloudinary(File imageFile) async {
+  const cloudName = 'dnfa3i0mx'; // Reemplaza con tu cloud name
+  final apiSecret = 'WdMy81Ma7_QYJBcG3Ao2cAQXkiM'; // Reemplaza con tu API secret
+  
+  final url = 'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
+
+  final uri = Uri.parse(url);
+
+  final request = http.MultipartRequest('POST', uri)
+    ..fields['upload_preset'] = 'gci5k7yn' // Reemplaza con tu upload preset
+    ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+  final response = await request.send();
+
+  if (response.statusCode == 200) {
+    final responseData = await response.stream.bytesToString();
+    final data = json.decode(responseData);
+    return data['secure_url']; // La URL pública de la imagen subida
+  } else {
+    throw Exception('Error al subir la imagen a Cloudinary');
+  }
+}
+
+  Future sendAlert(LatLng value, String entidad, String msg , String selectedTags , String imageUrl) async {  
     final url = '${urlBase}';
     final email = await _getEmail();
 
@@ -46,7 +70,7 @@ class AlertController extends GetxController{
       'tags': selectedTags,
       'lat':  value.latitude.toString(),
       'long': value.longitude.toString(),
-      'url_image': "https://www.osiptel.gob.pe/media/ud2dy3hb/np24072023.jpg",
+      'url_image': imageUrl ?? "https://www.osiptel.gob.pe/media/ud2dy3hb/np24072023.jpg",
       'type': "Malla Vial",
       'entity': entidad
     };

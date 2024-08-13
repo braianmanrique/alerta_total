@@ -291,9 +291,35 @@ class _ReportPageState extends State<ReportPage> {
               String text = _textController.text;
               List<String> selectedTagsList = _selectedTags.toList();
                String tags = _selectedTags.join(', ');
+                String? imageUrl;
+
+                
+                if (_image != null) {
+    
+            try {
+                imageUrl = await alertCtrl.uploadImageToCloudinary(_image!);
+              } catch (e) {
+                print(e);
+              Get.snackbar(
+        'Error', 
+        'No se pudo subir la imagen',
+        backgroundColor: Colors.red,
+        snackPosition: SnackPosition.BOTTOM,
+        icon: const Icon(Icons.error_rounded, color: Colors.white),
+        boxShadows: [
+          const BoxShadow(
+            color: Colors.black38,
+            blurRadius: 10.0
+          )
+        ]
+      );
+      return;
+    }
+  }
 
 
-                        await alertCtrl.sendAlert(locationFlutter, identifier , text , tags );
+
+                        await alertCtrl.sendAlert(locationFlutter, identifier , text , tags ,imageUrl! );
                           if(alertCtrl.statusOk.value){
                             Get.snackbar(
                             'Mensaje Importante', 
