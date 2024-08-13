@@ -1,10 +1,13 @@
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService{
   final _auth = FirebaseAuth.instance;
+    final storage = new FlutterSecureStorage();
+
 
   Future<UserCredential?> loginWithGoogle() async{
     try{
@@ -21,6 +24,8 @@ class AuthService{
   } 
 
   Future<void> signout() async {
+    await storage.delete(key: 'token');
+    
     try {
       await _auth.signOut();
     } catch (e) {

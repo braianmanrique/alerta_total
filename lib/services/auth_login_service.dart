@@ -32,31 +32,21 @@ class AuthLoginService extends ChangeNotifier{
       if(decodeResp.containsKey('token')){
         //save token
         storage.write(key: 'token', value: decodeResp['token']);
+        storage.write(key: 'email', value: decodeResp['user']['email']);
+
+        final token = await storage.read(key: 'token');
+
          return null;
       }else{
         return decodeResp['msg'];
       }
-
-
-
-        // Aquí puedes manejar la respuesta, por ejemplo, guardar un token o mostrar un mensaje
-       
-      // } else {
-      //   print('Error en la respuesta del servidor: ${response.statusCode}');
-      //   final Map<String, dynamic> decodeResp = json.decode(response.body);
-        
-      //   return decodeResp['msg'];
-      // }
 
     }
       catch (e) {
       // Manejo de errores en la solicitud
       return 'Error: $e';
     }
-    // final resp = await http.post(url, body: json.encode(authData)) ;
-    // final Map<String, dynamic> decodeResp = json.decode(resp.body);
 
-    // print(decodeResp);
   }
 
     Future<String?> registerUser(String name, String email, String document, String password) async{
@@ -78,36 +68,28 @@ class AuthLoginService extends ChangeNotifier{
       );
       
         final Map<String, dynamic> decodeResp = json.decode(response.body);
-        print(decodeResp);
-
       // guardar el token
       if(decodeResp.containsKey('token')){
         //save token
         storage.write(key: 'token', value: decodeResp['token']);
+        storage.write(key: 'email', value: decodeResp['user']['email']);
+
          return null;
       }else{
         return decodeResp['msg'];
       }
-
-
-
-        // Aquí puedes manejar la respuesta, por ejemplo, guardar un token o mostrar un mensaje
-       
-      // } else {
-      //   print('Error en la respuesta del servidor: ${response.statusCode}');
-      //   final Map<String, dynamic> decodeResp = json.decode(response.body);
-        
-      //   return decodeResp['msg'];
-      // }
 
     }
       catch (e) {
       // Manejo de errores en la solicitud
       return 'Error: $e';
     }
-    // final resp = await http.post(url, body: json.encode(authData)) ;
-    // final Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-    // print(decodeResp);
+    
   }
+
+  Future<String> readToken() async{
+    return await storage.read(key: 'token') ?? '';
+  }
+
+ 
 }

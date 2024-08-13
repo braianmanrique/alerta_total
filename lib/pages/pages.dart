@@ -1,3 +1,5 @@
+export 'package:alerta_total/pages/check_auth_page.dart';
+
 export 'package:alerta_total/pages/register_page.dart';
 
 export 'package:alerta_total/pages/records_page.dart';

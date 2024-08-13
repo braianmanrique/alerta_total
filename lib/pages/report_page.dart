@@ -4,7 +4,6 @@ import 'package:alerta_total/controller/alert_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -24,15 +23,14 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   File? _image;
 
-    final alertCtrl = Get.find<AlertController>();
-
+  final alertCtrl = Get.find<AlertController>();
   final picker = ImagePicker();
   final TextEditingController _textController = TextEditingController();
 
   final Completer<GoogleMapController> _controller = Completer();
   MapType mapType = MapType.normal;
 
-  late LatLng locationFlutter =  const LatLng(4.1500 ,-73.6333); 
+  late LatLng locationFlutter =  const LatLng(	4.87591800 ,	-72.89791090); 
   bool locationCheck = false; 
 
   late Marker marker;
@@ -40,6 +38,10 @@ class _ReportPageState extends State<ReportPage> {
   late double distMtrs;
   late List<map_launcher.AvailableMap> availableMaps;
   late String optionDropdown = '1';
+    Set<String> _selectedTags = {}; // Variable para almacenar los tags seleccionados
+
+  final GlobalKey<_TagSelectionWidgetState> _tagSelectionKey = GlobalKey<_TagSelectionWidgetState>();
+
 
   Future _getLocation() async {
   Location location = Location();
@@ -47,6 +49,7 @@ class _ReportPageState extends State<ReportPage> {
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
+
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -82,12 +85,6 @@ class _ReportPageState extends State<ReportPage> {
     });
   }
 
-  void _sendAlert() {
-    // Implement your send alert functionality here
-    String text = _textController.text;
-    
-    // Add your alert sending logic here
-  }
 
   void asyncMethod() async {
     await _getLocation();
@@ -127,12 +124,14 @@ class _ReportPageState extends State<ReportPage> {
     final width = MediaQuery.of(context).size;
     // identifica la entidad
     final String identifier = ModalRoute.of(context)!.settings.arguments as String;
+    print(identifier);
+
     late CameraPosition puntoInicial;
 
      CameraPosition puntodefault = const CameraPosition(
-        target: LatLng(4.1500, -73.6333),
+        target: LatLng(4.87591800, -72.89791090),
         //target: this.locationFlutter,
-        zoom: 12.5,
+        zoom: 14,
         tilt: 50.0
       );
 
@@ -204,12 +203,11 @@ class _ReportPageState extends State<ReportPage> {
         children: [
         CustomScrollView(   
           slivers: [
-            // _CustomAppBar(identifier: identifier),
             SliverList(
               delegate: SliverChildListDelegate([
                 // _Title(),
                 Container(
-                  height: size.height * 0.28,
+                  height: size.height * 0.248,
                   width: size.width *0.3,
                   margin: const EdgeInsets.all(29.0),
                   decoration: BoxDecoration(
@@ -239,7 +237,7 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                 ),
         
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 // _Overview(),
                 _ImageSection(
                   image: _image,
@@ -250,44 +248,63 @@ class _ReportPageState extends State<ReportPage> {
                 SizedBox(height: 5),
                 _TextSection(
                   textController: _textController,
-                  onSendAlert: _sendAlert,
                 ),
+                TagSelectionWidget(
+                  onTagsSelected: (Set<String> selectedTags) { 
+                    setState(() {
+                          _selectedTags = selectedTags;
+
+                    });
+                   },),
+                    const SizedBox(height: 125),
+
+
               ]),
             ),
           ],
         ),
-        ElevatedButton(
-  onPressed: () {
-    Get.snackbar(
-      'Prueba',
-      'Este es un mensaje de prueba',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  },
-  child: Text('Mostrar Snackbar'),
-),
+      
          Positioned(
-           bottom: 60,
+          bottom: 20,
           left: 30,
-           child: ButtonWidget(
-                      width: size.width * 0.4,
-                      height: 55.0,
-                      colorButton: const Color(0xffe30613),
-                      borderRadius: BorderRadius.circular(15.0),
-                      title: 'Enviar Alerta',
-                      onPressed: () async {
-                        await alertCtrl.sendAlert(locationFlutter);
+          child: ElevatedButton.icon(
+          icon: const Icon(Icons.send_outlined),
+          label: const Text('Enviar'),
+          onPressed: () async{
+             if (_selectedTags.isEmpty) {
+                  Get.snackbar(
+                 'Error', 
+                  'Debe seleccionar al menos un tag',
+                  backgroundColor: Colors.red,
+                  snackPosition: SnackPosition.BOTTOM,
+                  icon: const Icon(Icons.error_rounded, color: Colors.white),
+                  boxShadows: [
+                  const BoxShadow(
+                  color: Colors.black38,
+          blurRadius: 10.0
+        )
+      ]
+               );
+                 return; // Salir del método si no se selecciona ningún tag
+              }
+
+              String text = _textController.text;
+              List<String> selectedTagsList = _selectedTags.toList();
+               String tags = _selectedTags.join(', ');
+
+
+                        await alertCtrl.sendAlert(locationFlutter, identifier , text , tags );
                           if(alertCtrl.statusOk.value){
                             Get.snackbar(
                             'Mensaje Importante', 
-                            'Alerta agregada con exito',
-                            backgroundColor: Colors.green,
+                            'Alerta agregar con exito',
+                            backgroundColor: Color.fromARGB(255, 211, 218, 211),
                             icon: const Icon(Icons.check_circle_rounded, color: Color(0xff16a085)),        
                             snackPosition: SnackPosition.BOTTOM,
                 
                             boxShadows: [
                               const BoxShadow(
-                                color: Colors.black38,
+                                color: Color.fromARGB(96, 221, 20, 20),
                                 blurRadius: 10.0
                               )
                             ]
@@ -309,18 +326,9 @@ class _ReportPageState extends State<ReportPage> {
                             );
                           }
                           Navigator.of(context).pushNamedAndRemoveUntil('dashboard', (Route<dynamic> route) => false);
-                      },
-                    ),
-         ),
-         Positioned(
-          bottom: 20,
-          left: 30,
-          child: ElevatedButton.icon(
-          icon: const Icon(Icons.send_outlined),
-          label: const Text('Enviar'),
-          onPressed: _sendAlert,
+          },
           style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent, // Fondo rojo
+                backgroundColor: const Color.fromARGB(255, 214, 33, 48), // Fondo rojo
                 foregroundColor: Colors.white, // Texto blanco
               ),
           )  
@@ -401,12 +409,12 @@ class _ImageSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           image == null
-              ? Text('Ninguna imagen seleccionada.')
+              ? const Text('Ninguna imagen seleccionada.')
               : Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -432,14 +440,16 @@ class _ImageSection extends StatelessWidget {
                   ),
                 ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(Icons.camera_alt),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.camera_alt_outlined),
+                label: const Text('Tomar Foto'),
                 onPressed: onCameraTap,
               ),
-              IconButton(
-                icon: Icon(Icons.photo),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.photo_library_outlined),
+                label: const Text('Galería'),
                 onPressed: onGalleryTap,
               ),
             ],
@@ -452,11 +462,9 @@ class _ImageSection extends StatelessWidget {
 
 class _TextSection extends StatelessWidget {
   final TextEditingController textController;
-  final VoidCallback onSendAlert;
 
   const _TextSection({
     required this.textController,
-    required this.onSendAlert,
   });
 
   @override
@@ -467,7 +475,6 @@ class _TextSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
-            
             controller: textController,
             maxLines: 4,
             decoration: InputDecoration(
@@ -483,13 +490,58 @@ class _TextSection extends StatelessWidget {
               hintText: 'Escribe tu mensaje aquí...',
             ),
           ),
-          SizedBox(height: 10),
-          // ElevatedButton(
-          //   onPressed: onSendAlert,
-          //   child: Text('Enviar '),
-          // ),
+          const SizedBox(height: 10),
+        
         ],
       ),
     );
   }
 }
+
+
+class TagSelectionWidget extends StatefulWidget {
+    final void Function(Set<String> selectedTags) onTagsSelected;
+    
+    TagSelectionWidget({required this.onTagsSelected});
+
+  @override
+  _TagSelectionWidgetState createState() => _TagSelectionWidgetState();
+}
+
+
+class _TagSelectionWidgetState extends State<TagSelectionWidget> {
+  // Lista de etiquetas para los chips
+  final List<String> _tags = ['Hurto', 'Malla Vial', 'Accidente'];
+  final Set<String> _selectedTags = {};
+
+  // Estado para los tags seleccionados
+  List<String> getSelectedTags() {
+    return _selectedTags.toList();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Wrap(
+        spacing: 8.0, // Espacio horizontal entre chips
+        runSpacing: 4.0, // Espacio vertical entre chips
+        children: _tags.map((tag) {
+          return ChoiceChip(
+            label: Text(tag),
+            selected: _selectedTags.contains(tag),
+            onSelected: (selected) {
+              setState(() {
+                if (selected) {
+                  _selectedTags.add(tag);
+                } else {
+                  _selectedTags.remove(tag);
+                }
+              widget.onTagsSelected(_selectedTags); // Pasa los tags seleccionados al widget padre
+
+              });
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+  }

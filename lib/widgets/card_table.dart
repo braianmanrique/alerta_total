@@ -9,19 +9,19 @@ class CardTable extends StatelessWidget {
         TableRow(
           children: [
             _SingleCard( color: Colors.white , text: 'Policia' , icon: Icons.policy_sharp, identifier: 'Policia' ),
-            _SingleCard( color: Colors.white , text: 'Emergencia y Salud' , icon: Icons.health_and_safety,  identifier: 'Emergencia' ),
+            _SingleCard( color: Colors.white , text: 'Emergencia y Salud' , icon: Icons.health_and_safety,  identifier: 'Emergencia y Salud' ),
         ]
         ),
         TableRow(
           children: [
-            _SingleCard( color: Colors.white , text: 'Transito y Transporte' , icon: Icons.policy_sharp , identifier: 'Transito' ),
-            _SingleCard( color: Colors.white , text: 'Alcandia Municipal' , icon: Icons.policy_sharp, identifier: 'Alcaldia' ),
+            _SingleCard( color: Colors.white , text: 'Transito y Transporte' , icon: Icons.policy_sharp , identifier: 'Transito y transporte' ),
+            _SingleCard( color: Colors.white , text: 'Alcandia Municipal' , icon: Icons.policy_sharp, identifier: 'Alcaldia Municipal' ),
         ]
         ),
         TableRow(
           children: [
-            _SingleCard( color: Colors.white , text: 'Defensa civil' , icon: Icons.bloodtype_sharp,  identifier: 'Defensa_civil'  ),
-            _SingleCard( color: Colors.white , text: 'Cuerpo de Bomberos' , icon: Icons.fire_hydrant_alt_sharp , identifier: 'bomberos' ),
+            _SingleCard( color: Colors.white , text: 'Defensa civil' , icon: Icons.bloodtype_sharp,  identifier: 'Defensa civil'  ),
+            _SingleCard( color: Colors.white , text: 'Cuerpo de Bomberos' , icon: Icons.fire_hydrant_alt_sharp , identifier: 'Cuerpo de Bomberos' ),
         ]
         ),       
         

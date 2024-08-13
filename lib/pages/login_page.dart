@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_in_button/sign_in_button.dart';
+import 'package:get/get.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -83,8 +85,7 @@ class _LoginPageState extends State<LoginPage> {
   
     if (userCredential?.user != null &&  userCredential?.user != null) {
       print("User Logged In");
-      print(userCredential!.user!.email);
-      print( userCredential!.user);
+    
       final user = userCredential!.user!;
       String? displayName = user.displayName;
 
@@ -94,28 +95,22 @@ class _LoginPageState extends State<LoginPage> {
 
 
       final backendResponse = await authLoginService.loginUser(email, uid); // Suponiendo que usas el UID como contraseña
-      print(backendResponse);
       if (backendResponse != "Email no encontrado") {
-        print("Usuario logueado y autenticado en el backend.");
         goToHome(context, user);
       } else {
         final backendResponse = await authLoginService.registerUser(email, email,  uid, uid);
       if (backendResponse == null) {
         // Usuario logueado y autenticado en el backend
-        print("Usuario logueado y autenticado en el backend.");
         goToHome(context, user);
       } else {
         // Muestra el error en caso de fallo en el backend
         _showErrorDialog("Error", backendResponse);
       }
-
       }
-
-
     }
       
      }catch(e){
-            _showErrorDialog("Error", e.toString());
+       _showErrorDialog("Error", e.toString());
      }
   
 }
@@ -208,13 +203,26 @@ class _LoginForm extends StatelessWidget {
               loginForm.isLoading = true;
 
              final String? errorMessage = await authLoginService.loginUser(loginForm.email, loginForm.password);
-              print(errorMessage);
+
               if(errorMessage ==  null) {
                   Navigator.pushReplacementNamed(context, 'dashboard');
                   loginForm.isLoading = false;
 
               }else{
                   loginForm.isLoading = false;
+                  Get.snackbar(
+                            'Mensaje', 
+                            errorMessage,
+                            backgroundColor: Colors.white,
+                            icon: const Icon(Icons.nearby_error, color: Color.fromARGB(255, 160, 22, 22)),        
+                            snackPosition: SnackPosition.TOP,
+                            boxShadows: [
+                              const BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 10.0
+                              )
+                            ]
+                  );
               }
 
             },
