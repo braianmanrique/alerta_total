@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
       final authLoginService = Provider.of<AuthLoginService>(context, listen: false);
 
 
-      final backendResponse = await authLoginService.loginUser(email, uid); // Suponiendo que usas el UID como contraseña
+      final backendResponse = await authLoginService.loginUser(email, uid); 
       if (backendResponse != "Email no encontrado") {
         goToHome(context, user);
       } else {
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
         // Usuario logueado y autenticado en el backend
         goToHome(context, user);
       } else {
-        // Muestra el error en caso de fallo en el backend
+        
         _showErrorDialog("Error", backendResponse);
       }
       }
